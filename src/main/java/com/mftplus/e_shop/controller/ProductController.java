@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
 
@@ -18,22 +18,33 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<ProductDTO> saveProduct(@RequestBody ProductDTO productDto) {
         ProductDTO savedProduct = productService.save(productDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
-    @PutMapping("/{productId}")
+    @PutMapping("/update/{productId}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long productId, @RequestBody ProductDTO productDto) {
         ProductDTO updated = productService.update(productId, productDto);
         return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/remove/{productId}")
+    public ResponseEntity<Void> deleteProductById(@PathVariable Long productId) {
+        productService.logicalRemove(productId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<ProductDTO> productDtoList = productService.findAll();
         return new ResponseEntity<>(productDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/id/{productId}")
+    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long productId) {
+        return ResponseEntity.ok(productService.getById(productId));
     }
 
     @GetMapping("/name/{productName}")
@@ -59,18 +70,6 @@ public class ProductController {
     @PutMapping("/sell/{productId}/{amount}")
     public ResponseEntity<ProductDTO> sell(@PathVariable Long productId, @PathVariable int amount) {
         return ResponseEntity.ok(productService.sell(productId, amount));
-    }
-
-    @GetMapping("/id/{productId}")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long productId) {
-        return ResponseEntity.ok(productService.getById(productId));
-    }
-
-
-    @DeleteMapping("/remove/{productId}")
-    public ResponseEntity<Void> deleteProductById(@PathVariable Long productId) {
-        productService.logicalRemove(productId);
-        return ResponseEntity.ok().build();
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
