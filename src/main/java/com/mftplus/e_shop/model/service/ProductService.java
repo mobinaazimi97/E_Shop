@@ -11,7 +11,7 @@ public interface ProductService {
     List<ProductDTO> getByProductName(String productName);
     List<ProductDTO> findByProductQuantity(int quantity);
     List<ProductDTO> findAll();
-    public ProductDTO rechargeProduct(Long productId);
+    ProductDTO rechargeProduct(Long productId);
     ProductDTO refillProduct(Long productId);
     ProductDTO sell(Long productId, int amount);
     void logicalRemove(Long id);
